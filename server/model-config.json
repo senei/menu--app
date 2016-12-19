@@ -39,15 +39,15 @@
   "Email": {
     "dataSource": "emailDs"
   },
-  "user": {
-    "dataSource": "db",
-    "public": true,
-    "options": {
-      // "emailVerificationRequired": true,
-      "realmRequired": true,
-      "realmDelimiter": ":"
-    },
-    "$promise": {},
-    "$resolved": true
-  }
+  // "user": {
+  //   "dataSource": "db",
+  //   "public": true,
+  //   "options": {
+  //     // "emailVerificationRequired": true,
+  //     "realmRequired": true,
+  //     "realmDelimiter": ":"
+  //   },
+  //   "$promise": {},
+  //   "$resolved": true
+  // }
 }
