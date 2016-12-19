@@ -34,5 +34,20 @@
   },
   "Message": {
     "dataSource": null
+  },
+
+  "Email": {
+    "dataSource": "emailDs"
+  },
+  "user": {
+    "dataSource": "mongoDB",
+    "public": true,
+    "options": {
+      "emailVerificationRequired": true,
+      "realmRequired": true,
+      "realmDelimiter": ":"
+    },
+    "$promise": {},
+    "$resolved": true
   }
 }
