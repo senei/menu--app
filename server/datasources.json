@@ -3,7 +3,7 @@
     "name": "db",
     "connector": "memory"
   },
-  
+
   "emailDs": {
     "name": "emailDs",
     "connector": "mail",
@@ -22,7 +22,8 @@
         }
       }
     ]
-  },
+  }
+  ,
 
   "mongoDB": {
     "host": "mongodb://ds119618.mlab.com",
