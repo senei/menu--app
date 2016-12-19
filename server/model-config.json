@@ -14,7 +14,8 @@
     ]
   },
   "User": {
-    "dataSource": "db"
+    "dataSource": "db",
+    "public": false
   },
   "AccessToken": {
     "dataSource": "db",
@@ -33,7 +34,8 @@
     "public": false
   },
   "Message": {
-    "dataSource": null
+    "dataSource": null,
+    "public": false
   },
 
 
@@ -44,9 +46,7 @@
     "dataSource": "mongoDB",
     "public": true,
     "options": {
-      "emailVerificationRequired": true,
-      "realmRequired": true,
-      "realmDelimiter": ":"
+      "emailVerificationRequired": true
     },
     "$promise": {},
     "$resolved": true
