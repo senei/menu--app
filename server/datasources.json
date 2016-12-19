@@ -2,36 +2,37 @@
   "db": {
     "name": "db",
     "connector": "memory"
-  },
-
-  "emailDs": {
-    "name": "emailDs",
-    "connector": "mail",
-    "transports": [
-      {
-        "type": "smtp",
-        "host": "smtp.gmail.com",
-        "secure": true,
-        "port": 465,
-        "tls": {
-          "rejectUnauthorized": false
-        },
-        "auth": {
-          "user": "senei.web@gmail.com",
-          "pass": "senei8pass"
-        }
-      }
-    ]
-  },
-
-  "mongoDB": {
-    "host": "mongodb://ds119618.mlab.com",
-    "port": 19618,
-    "url": "mongodb://db:dbpass@ds119618.mlab.com:19618/senei",
-    "database": "senei",
-    "password": "dbpass",
-    "name": "mongoDB",
-    "user": "db",
-    "connector": "mongodb"
   }
+  // ,
+
+  // "emailDs": {
+  //   "name": "emailDs",
+  //   "connector": "mail",
+  //   "transports": [
+  //     {
+  //       "type": "smtp",
+  //       "host": "smtp.gmail.com",
+  //       "secure": true,
+  //       "port": 465,
+  //       "tls": {
+  //         "rejectUnauthorized": false
+  //       },
+  //       "auth": {
+  //         "user": "senei.web@gmail.com",
+  //         "pass": "senei8pass"
+  //       }
+  //     }
+  //   ]
+  // },
+
+  // "mongoDB": {
+  //   "host": "mongodb://ds119618.mlab.com",
+  //   "port": 19618,
+  //   "url": "mongodb://db:dbpass@ds119618.mlab.com:19618/senei",
+  //   "database": "senei",
+  //   "password": "dbpass",
+  //   "name": "mongoDB",
+  //   "user": "db",
+  //   "connector": "mongodb"
+  // }
 }

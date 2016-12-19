@@ -34,11 +34,12 @@
   },
   "Message": {
     "dataSource": null
-  },
+  }
+  // ,
 
-  "Email": {
-    "dataSource": "emailDs"
-  },
+  // "Email": {
+  //   "dataSource": "emailDs"
+  // },
   // "user": {
   //   "dataSource": "db",
   //   "public": true,
