@@ -3,7 +3,7 @@
     "name": "db",
     "connector": "memory"
   },
-  
+
   "emailDs": {
     "name": "emailDs",
     "connector": "mail",
@@ -22,16 +22,17 @@
         }
       }
     ]
-  },
-
-  "mongoDB": {
-    "host": "mongodb://ds119618.mlab.com",
-    "port": 19618,
-    "url": "mongodb://db:dbpass@ds119618.mlab.com:19618/senei",
-    "database": "senei",
-    "password": "dbpass",
-    "name": "mongoDB",
-    "user": "db",
-    "connector": "mongodb"
   }
+  // ,
+
+  // "mongoDB": {
+  //   "host": "mongodb://ds119618.mlab.com",
+  //   "port": 19618,
+  //   "url": "mongodb://db:dbpass@ds119618.mlab.com:19618/senei",
+  //   "database": "senei",
+  //   "password": "dbpass",
+  //   "name": "mongoDB",
+  //   "user": "db",
+  //   "connector": "mongodb"
+  // }
 }

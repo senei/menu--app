@@ -40,10 +40,10 @@
     "dataSource": "emailDs"
   },
   "user": {
-    "dataSource": "mongoDB",
+    "dataSource": "db",
     "public": true,
     "options": {
-      "emailVerificationRequired": true,
+      // "emailVerificationRequired": true,
       "realmRequired": true,
       "realmDelimiter": ":"
     },
