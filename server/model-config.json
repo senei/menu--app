@@ -37,8 +37,6 @@
     "dataSource": null,
     "public": false
   },
-
-
   "Email": {
     "dataSource": "emailDs"
   },
@@ -48,6 +46,19 @@
     "options": {
       "emailVerificationRequired": true
     },
+    "$promise": {},
+    "$resolved": true
+  },
+
+  "address": {
+    "dataSource": "mongoDB",
+    "public": true,
+    "$promise": {},
+    "$resolved": true
+  },
+  "diner": {
+    "dataSource": "mongoDB",
+    "public": true,
     "$promise": {},
     "$resolved": true
   }

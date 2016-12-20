@@ -1,7 +1,7 @@
 {
   "name": "user",
   "base": "User",
-  "idInjection": true,
+  "idInjection": false,
   "options": {
     "validateUpsert": true
   },
@@ -19,12 +19,35 @@
     }
   },
   "validations": [],
-  "relations": {},
+  "relations": {
+    "address": {
+      "type": "belongsTo",
+      "model": "address",
+      "foreignKey": "addressId"
+    },
+    "diners": {
+      "type": "hasMany",
+      "model": "diner",
+      "foreignKey": "userId"
+    }
+  },
   "acls": [
     {
       "accessType": "READ",
       "principalType": "ROLE",
-      "principalId": "$everyone",
+      "principalId": "$unauthenticated",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "*",
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "*",
+      "principalType": "ROLE",
+      "principalId": "$owner",
       "permission": "ALLOW"
     }
   ],

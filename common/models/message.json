@@ -2,16 +2,27 @@
   "name": "Message",
   "base": "Model",
   "properties": {},
+  "validations": [],
+  "relations": {},
+  "acls": [
+    {
+      "accessType": "*",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW"
+    }
+  ],
   "methods": {
     "greet": {
-      "isStatic": true,
-      "accepts": [{
-        "arg": "msg",
-        "type": "string",
-        "http": {
-          "source": "query"
+      "accepts": [
+        {
+          "arg": "msg",
+          "type": "string",
+          "http": {
+            "source": "query"
+          }
         }
-      }],
+      ],
       "returns": {
         "arg": "greeting",
         "type": "string"
