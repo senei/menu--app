@@ -1,0 +1,47 @@
+{
+  "name": "diner_menu",
+  "base": "PersistedModel",
+  "strict": false,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "breakfast": {
+      "type": "boolean"
+    },
+    "lunch": {
+      "type": "boolean"
+    },
+    "extras": {
+      "type": "boolean"
+    },
+    "tea": {
+      "type": "boolean"
+    },
+    "takeaway": {
+      "type": "boolean"
+    },
+    "repeat": {
+      "type": "boolean"
+    },
+    "price": {
+      "type": "number"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "diner": {
+      "type": "belongsTo",
+      "model": "diner",
+      "foreignKey": "dinerId"
+    },
+    "menu": {
+      "type": "belongsTo",
+      "model": "menu",
+      "foreignKey": "menuId"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

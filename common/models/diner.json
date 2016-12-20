@@ -1,0 +1,55 @@
+{
+  "name": "diner",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "diet": {
+      "type": "string"
+    },
+    "bio": {
+      "type": "string"
+    },
+    "age": {
+      "type": "number"
+    },
+    "name": {
+      "type": "string",
+      "required": false
+    },
+    "phone": {
+      "type": "string",
+      "required": false,
+      "index": false
+    }
+  },
+  "validations": [],
+  "relations": {
+    "user": {
+      "type": "belongsTo",
+      "model": "user",
+      "foreignKey": "userId"
+    },
+    "canteen": {
+      "type": "belongsTo",
+      "model": "address",
+      "foreignKey": "canteenId"
+    },
+    "orders": {
+      "type": "hasMany",
+      "model": "diner_menu",
+      "foreignKey": "dinerId"
+    }
+  },
+  "acls": [
+    {
+      "accessType": "*",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW"
+    }
+  ],
+  "methods": {}
+}

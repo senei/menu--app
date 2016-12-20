@@ -1,0 +1,57 @@
+{
+  "name": "menu",
+  "base": "PersistedModel",
+  "strict": false,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "day": {
+      "type": "number"
+    },
+    "week": {
+      "type": "number"
+    },
+    "year": {
+      "type": "number"
+    },
+    "diet": {
+      "type": "string"
+    },
+    "breakfast": {
+      "type": "string"
+    },
+    "extras": {
+      "type": "string"
+    },
+    "lunch": {
+      "type": "string"
+    },
+    "tea": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "user": {
+      "type": "belongsTo",
+      "model": "user",
+      "foreignKey": "vendorId"
+    },
+    "orders": {
+      "type": "hasMany",
+      "model": "diner_menu",
+      "foreignKey": "menuId"
+    }
+  },
+  "acls": [
+    {
+      "accessType": "READ",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW"
+    }
+  ],
+  "methods": {}
+}

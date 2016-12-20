@@ -1,0 +1,55 @@
+{
+  "name": "menu_price",
+  "base": "PersistedModel",
+  "strict": false,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "extras": {
+      "type": "number"
+    },
+    "breakfast": {
+      "type": "number"
+    },
+    "lunch": {
+      "type": "number"
+    },
+    "tea": {
+      "type": "number"
+    },
+    "sum": {
+      "type": "number"
+    },
+    "week": {
+      "type": "number"
+    },
+    "year": {
+      "type": "number"
+    },
+    "takeaway": {
+      "type": "number"
+    },
+    "diet": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "user": {
+      "type": "belongsTo",
+      "model": "user",
+      "foreignKey": "vendorId"
+    }
+  },
+  "acls": [
+    {
+      "accessType": "READ",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW"
+    }
+  ],
+  "methods": {}
+}
