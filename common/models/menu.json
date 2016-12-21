@@ -7,22 +7,8 @@
     "validateUpsert": true
   },
   "properties": {
-    "day": {
-      "type": "number"
-    },
-    "week": {
-      "type": "number"
-    },
-    "year": {
-      "type": "number"
-    },
-    "diet": {
-      "type": "string"
-    },
+    
     "breakfast": {
-      "type": "string"
-    },
-    "extras": {
       "type": "string"
     },
     "lunch": {
@@ -30,6 +16,15 @@
     },
     "tea": {
       "type": "string"
+    },
+    "year": {
+      "type": "number"
+    },
+    "week": {
+      "type": "number"
+    },
+    "day": {
+      "type": "number"
     }
   },
   "validations": [],
@@ -38,11 +33,6 @@
       "type": "belongsTo",
       "model": "user",
       "foreignKey": "vendorId"
-    },
-    "orders": {
-      "type": "hasMany",
-      "model": "diner_menu",
-      "foreignKey": "menuId"
     }
   },
   "acls": [

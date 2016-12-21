@@ -29,6 +29,16 @@
       "type": "hasMany",
       "model": "diner",
       "foreignKey": "userId"
+    },
+    "menus": {
+      "type": "hasMany",
+      "model": "menu",
+      "foreignKey": "vendorId"
+    },
+    "menus-prices": {
+      "type": "hasMany",
+      "model": "menu-price",
+      "foreignKey": "vendorId"
     }
   },
   "acls": [

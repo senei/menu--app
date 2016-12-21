@@ -37,6 +37,7 @@
     "dataSource": null,
     "public": false
   },
+
   "Email": {
     "dataSource": "emailDs"
   },
@@ -57,6 +58,18 @@
     "$resolved": true
   },
   "diner": {
+    "dataSource": "mongoDB",
+    "public": true,
+    "$promise": {},
+    "$resolved": true
+  },
+  "menu": {
+    "dataSource": "mongoDB",
+    "public": true,
+    "$promise": {},
+    "$resolved": true
+  },
+  "menu-price": {
     "dataSource": "mongoDB",
     "public": true,
     "$promise": {},
