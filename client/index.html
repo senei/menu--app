@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+
+<head>
+  <title>menu master -- login</title>
+  <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="/css/foundation.css">
+    <link rel="stylesheet" href="/css/app.css">
+
+    <script src="/js/vendor/jquery.js"></script>
+    <script src="/js/vendor/what-input.js"></script>
+    <script src="/js/vendor/foundation.js"></script>
+    <!-- vue -->
+    <script src="/js/vendor/vue.js"></script>
+    <script src="/js/vendor/vue-resource.js"></script>
+
+</head>
+
+<body>
+  <h1 style="font-size: 0.8rem;margin: 0;">Menu
+    <small>master</small>:)</h1>
+  <section id="app">
+    <p>Witaj {{ username }} <small v-if="user">( {{user.realm}} )</small></p>
+    <form v-cloak v-if="accessToken==''" action="">
+      <label for="user">login:</label>
+      <input id="user" v-model="username">
+      <br/>
+      <label for="pass">pass:</label>
+      <input id="pass" v-model="pass" type="password">
+      <br/>
+      <label for="btn"></label>
+      <button id="btn" v-on:click.prevent="logIn">login</button>
+      <br/>
+    </form>
+    <dl v-cloak v-if="user && user.realm == 'M'"> 
+    <dt><sub>info : </sub></dt>
+    <dd> -- mamy {{weekNum}} tydzień {{year}} roku, dzień {{day}} -- </dd>
+    <dd v-if="day>4 || day == 0"> -- czas na nowe menu -- </dd>
+    
+    <dt><sub>menu : </sub></dt>
+    <dd v-if="day < 6"> <a v-bind:href="hrefs.menuWeek">na ten tydzień ({{weekNum}})</a> </dd>
+    <dd v-if="day < 6"> <a v-bind:href="hrefs.menu">na dziś</a> </dd>
+    <dd v-if="day < 5"> <a v-bind:href="hrefs.menuNext">na jutro</a> </dd>
+    <dd v-if="day > 4 || day == 0"> <a v-bind:href="hrefs.menuWeekNext">na następny tydzień ({{weekNum + 1}})</a> </dd>
+    
+    <dt><sub>zamówienia : </sub></dt>
+    <dd v-if="day < 6"> <a v-bind:href="hrefs.ordersWeek">na aktualne menu</a> </dd>
+    <dd v-if="day < 6"> <a v-bind:href="hrefs.orders">na dziś</a> </dd>
+    <dd v-if="day < 5"> <a v-bind:href="hrefs.ordersNext">na jutro</a> </dd>
+    <dd v-if="day > 4 || day == 0"> <a v-bind:href="hrefs.ordersWeekNext">na nowe menu</a> </dd>
+    </dl>
+  </section>
+
+  <script src="js/app.js"></script>
+
+  <script type="text/javascript">
+  Date.prototype.getWeek = function() {var onejan = new Date(this.getFullYear(),0,1);return Math.ceil((((this - onejan) / 86400000) + onejan.getDay()+1)/7);}
+  var _hash = window.location.hash;
+  var _today = new Date();
+  if (_hash.length > 0 && _hash.indexOf('-') > 0) {
+    _today = new Date(window.location.hash.substring(1));
+  }
+  
+  
+  var app = new Vue({
+    el: '#app',
+    data: {
+      username: 'nieznajomy',
+      pass: 'pass',
+      accessToken: '',
+      userId: '',
+      user: null,
+      weekNum: _today.getWeek(),
+      year: _today.getFullYear(),
+      day: _today.getDay(),
+      hrefs: {}
+    },
+    beforeMount: function() {
+      // relogin 
+      if (_hash.length > 0 && _hash.indexOf('@') > 0) {
+        _hash = _hash.substring(1).split('@')
+        this.accessToken = _hash[0];
+        this.userId = _hash[1];
+        sessionStorage.setItem('accessToken', this.accessToken);
+        sessionStorage.setItem('userId', this.userId);
+      } else if (sessionStorage.getItem('accessToken')) {
+        this.accessToken = sessionStorage.getItem('accessToken');
+        this.userId = sessionStorage.getItem('userId');
+      }
+
+      // user info
+      if(this.userId){
+        console.log('accessToken:', this.accessToken)
+        console.log('userId:', this.userId)
+        this.$http.get('/api/users/' + this.userId).then(
+          function(sucess) {
+            sessionStorage.setItem('user', JSON.stringify(sucess.body));
+            this.username = sucess.body.username;
+            this.user = sucess.body;
+            //path
+            if (this.user.realm == "M" && _hash.length > 0 && _hash.indexOf('!/') == 1) {
+               _hash = _hash.substring(1).split('/');
+               console.log(_hash[1], "day=", _hash[2]);
+            }
+            //
+            this.hrefs.menu           = "/menu/#!/"+this.year+"/"+this.weekNum+"/"+this.day;
+            this.hrefs.menuNext       = "/menu/#!/"+this.year+"/"+this.weekNum+"/"+this.day+1;
+            this.hrefs.menuWeek       = "/menu/#!/"+this.year+"/"+this.weekNum;
+            this.hrefs.menuWeekNext   = "/menu/#!/"+this.year+"/"+this.weekNum+1;
+            //
+            this.hrefs.orders         = "/orders/#!/"+this.year+"/"+this.weekNum+"/"+this.day;
+            this.hrefs.ordersNext     = "/orders/#!/"+this.year+"/"+this.weekNum+"/"+this.day+1;
+            this.hrefs.ordersWeek     = "/orders/#!/"+this.year+"/"+this.weekNum;
+            this.hrefs.ordersWeekNext = "/orders/#!/"+this.year+"/"+this.weekNum+1;
+            
+            console.log(this.hrefs);
+          }, function(error) {}
+        )
+      }
+       
+    },
+    methods: {
+      logIn: function() {
+        if (this.userId != '') {
+          this.$route.ruter.go('/')
+        }
+        if (this.username != '') {
+          console.log(this.user + "@" + this.pass)
+
+          this.$http.post('/api/users/login', {
+            "username": this.username,
+            "password": this.pass
+          }).then(
+            function(sucess) {
+              this.accessToken = sucess.body.id;
+              this.userId = sucess.body.userId;
+              sessionStorage.setItem('accessToken', this.accessToken);
+              sessionStorage.setItem('userId', this.userId);
+              console.log('sessionStorage:', sessionStorage)
+              this.$http.get('/api/users/' + this.userId).then(
+                function(sucess) {
+                  sessionStorage.setItem('user', JSON.stringify(sucess.body));
+                  this.user = sucess.body;
+                }, function(error) {}
+              )
+
+
+            }, function(error) {
+              console.error("error:", error)
+            });
+        }
+      }
+    }
+  })
+  </script>
+</body>

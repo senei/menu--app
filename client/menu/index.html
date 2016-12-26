@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+
+<head>
+  <title>menu -- menu master -- login</title>
+
+  <link rel="stylesheet" href="/css/foundation.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <style type="text/css">
+  </style>
+
+  <script src="/js/vendor/jquery.js"></script>
+  <script src="/js/vendor/what-input.js"></script>
+  <script src="/js/vendor/foundation.js"></script>
+  <!-- vue -->
+  <script src="/js/vendor/vue.js"></script>
+  <script src="/js/vendor/vue-resource.js"></script>
+</head>
+
+<body onhashchange="location.reload()">
+  <h1 style="font-size: 0.8rem;margin: 0;">Menus -- Menu <small>master</small>:)</h1>
+  <section id="app">
+    
+    <dl v-cloak><!-- //  -->
+      <dt><sub>info:</sub></dt>
+      <dd v-if="user">witam {{ user.username }} <small v-if="user.realm!='C'">( {{user.realm}}<span v-if="user.realm=='M'"> - master</span><span v-if="user.realm=='V'"> - vendor</span> )</small></dd>
+      <dd v-if="weekNum!=-1">wybrałeś {{weekNum}} tydzień {{year}} roku<span v-if="day!=-1">, dzień {{day}}</span></dd>
+      <dd v-if="prices">cena {{prices.sum}}<small>zł</small> <small>- śniadanie: {{prices.breakfast}}<small>zł</small>, obiad: {{prices.lunch}}<small>zł</small>, podwieczorek: {{prices.tea}}<small>zł</small></small>
+      <!-- data -->
+      <!-- todo: auto generate menu -->
+      <dt v-if="(day == -1 || day == 1) && menus[1] && menus[1][0]"><sub>{{_today.getDayOfWeek(1)}}: </sub></dt>
+      <dd v-if="(day == -1 || day == 1) && menus[1] && menus[1][0]" v-for="menu in menus[1]">
+        <span v-if="!edit">
+          <p v-if="menu.info"><i>info: </i>{{menu.info}}</p>
+          <p v-if="menu.breakfast"><i>śniadanie: </i>{{menu.breakfast}}</p>
+          <p v-if="menu.lunch"><i>obiad: </i>{{menu.lunch}}</p>
+          <p v-if="menu.tea"><i>podwieczorek: </i>{{menu.tea}}</p>
+          <small v-if="user && (user.realm == 'M' || user.realm == 'V')">
+            <i>
+              <a v-if="day != -1" v-bind:href="hrefs.return">(powrót)</a>
+              <a v-if="day == -1" v-bind:href="hrefs.menu1">(szczegóły)</a>
+            </i> 
+            <a v-bind:href="hrefs.menu1edit">(edycja)</a>
+          </small>
+        </span>
+        <form v-if="edit" action="">
+          <label>akcje:</label>
+          <button type="reset" v-on:click.prevent="returnMenu">powrót</button> - 
+          <button type="submit" v-on:click.prevent="saveMenu">zapisz</button>
+          <br/>
+          <br/>
+          <label for="info">info:</label>
+          <textarea id="info" v-model="menus[1][0].info"></textarea>
+          <br/>
+          <label for="breakfast">śniadanie:</label>
+          <textarea id="breakfast" v-model="menus[1][0].breakfast">
+          </textarea>
+          <br/>
+          <label for="lunch">obiad:</label>
+          <textarea id="lunch" v-model="menus[1][0].lunch"></textarea>
+          <br/>
+          <label for="tea">podwieczorek:</label>
+          <textarea id="tea" v-model="menus[1][0].tea"></textarea>
+          <br/>
+        </form>
+      </dd>
+      
+      <dt v-if="(day == -1 || day == 2) && menus[2] && menus[2][0]"><sub>{{_today.getDayOfWeek(2)}}: </sub></dt>
+      <dd v-if="(day == -1 || day == 2) && menus[2] && menus[2][0]" v-for="menu in menus[2]">
+        <span v-if="!edit">
+        <p v-if="menu.info"><i>info: </i>{{menu.info}}</p>
+        <p v-if="menu.breakfast"><i>śniadanie: </i>{{menu.breakfast}}</p>
+        <p v-if="menu.lunch"><i>obiad: </i>{{menu.lunch}}</p>
+        <p v-if="menu.tea"><i>podwieczorek: </i>{{menu.tea}}</p>
+        <small v-if="user && (user.realm == 'M' || user.realm == 'V')">
+          <i>
+            <a v-if="day != -1" v-bind:href="hrefs.return">(powrót)</a>
+            <a v-if="day == -1" v-bind:href="hrefs.menu2">(szczegóły)</a>
+          </i> 
+          <a v-if="hrefs.menu5edit" v-bind:href="hrefs.menu2edit">(edycja)</a>
+        </small>
+
+        </span>
+        <form v-if="edit" action="">
+          <label>akcje:</label>
+          <button type="reset" v-on:click.prevent="returnMenu">powrót</button> - 
+          <button type="submit" v-on:click.prevent="saveMenu">zapisz</button>
+          <br/>
+          <br/>
+          <label for="info">info:</label>
+          <textarea id="info" v-model="menus[2][0].info"></textarea>
+          <br/>
+          <label for="breakfast">śniadanie:</label>
+          <textarea id="breakfast" v-model="menus[2][0].breakfast">
+          </textarea>
+          <br/>
+          <label for="lunch">obiad:</label>
+          <textarea id="lunch" v-model="menus[2][0].lunch"></textarea>
+          <br/>
+          <label for="tea">podwieczorek:</label>
+          <textarea id="tea" v-model="menus[2][0].tea"></textarea>
+          <br/>
+        </form>
+      </dd>
+      
+      <dt v-if="(day == -1 || day == 3) && menus[3] && menus[3][0]"><sub>{{_today.getDayOfWeek(3)}}: </sub></dt>
+      <dd v-if="(day == -1 || day == 3) && menus[3] && menus[3][0]" v-for="menu in menus[3]">
+        <span v-if="!edit">
+        <p v-if="menu.info"><i>info: </i>{{menu.info}}</p>
+        <p v-if="menu.breakfast"><i>śniadanie: </i>{{menu.breakfast}}</p>
+        <p v-if="menu.lunch"><i>obiad: </i>{{menu.lunch}}</p>
+        <p v-if="menu.tea"><i>podwieczorek: </i>{{menu.tea}}</p>
+        <small v-if="user && (user.realm == 'M' || user.realm == 'V')">
+          <i>
+            <a v-if="day != -1" v-bind:href="hrefs.return">(powrót)</a>
+            <a v-if="day == -1" v-bind:href="hrefs.menu3">(szczegóły)</a>
+          </i> 
+          <a v-if="hrefs.menu5edit" v-bind:href="hrefs.menu3edit">(edycja)</a>
+        </small>
+
+        </span>
+        <form v-if="edit" action="">
+          <label>akcje:</label>
+          <button type="reset" v-on:click.prevent="returnMenu">powrót</button> - 
+          <button type="submit" v-on:click.prevent="saveMenu">zapisz</button>
+          <br/>
+          <br/>
+          <label for="info">info:</label>
+          <textarea id="info" v-model="menus[3][0].info"></textarea>
+          <br/>
+          <label for="breakfast">śniadanie:</label>
+          <textarea id="breakfast" v-model="menus[3][0].breakfast">
+          </textarea>
+          <br/>
+          <label for="lunch">obiad:</label>
+          <textarea id="lunch" v-model="menus[3][0].lunch"></textarea>
+          <br/>
+          <label for="tea">podwieczorek:</label>
+          <textarea id="tea" v-model="menus[3][0].tea"></textarea>
+          <br/>
+        </form>
+      </dd>
+      
+      <dt v-if="(day == -1 || day == 4) && menus[4] && menus[4][0]"><sub>{{_today.getDayOfWeek(4)}}: </sub></dt>
+      <dd v-if="(day == -1 || day == 4) && menus[4] && menus[4][0]" v-for="menu in menus[4]">
+        <span v-if="!edit">
+        <p v-if="menu.info"><i>info: </i>{{menu.info}}</p>
+        <p v-if="menu.breakfast"><i>śniadanie: </i>{{menu.breakfast}}</p>
+        <p v-if="menu.lunch"><i>obiad: </i>{{menu.lunch}}</p>
+        <p v-if="menu.tea"><i>podwieczorek: </i>{{menu.tea}}</p>
+        <small v-if="user && (user.realm == 'M' || user.realm == 'V')">
+          <i>
+            <a v-if="day != -1" v-bind:href="hrefs.return">(powrót)</a>
+            <a v-if="day == -1" v-bind:href="hrefs.menu4">(szczegóły)</a>
+          </i> 
+          <a v-if="hrefs.menu5edit" v-bind:href="hrefs.menu4edit">(edycja)</a>
+        </small>
+
+        </span>
+        <form v-if="edit" action="">
+          <label>akcje:</label>
+          <button type="reset" v-on:click.prevent="returnMenu">powrót</button> - 
+          <button type="submit" v-on:click.prevent="saveMenu">zapisz</button>
+          <br/>
+          <br/>
+          <label for="info">info:</label>
+          <textarea id="info" v-model="menus[4][0].info"></textarea>
+          <br/>
+          <label for="breakfast">śniadanie:</label>
+          <textarea id="breakfast" v-model="menus[4][0].breakfast">
+          </textarea>
+          <br/>
+          <label for="lunch">obiad:</label>
+          <textarea id="lunch" v-model="menus[4][0].lunch"></textarea>
+          <br/>
+          <label for="tea">podwieczorek:</label>
+          <textarea id="tea" v-model="menus[4][0].tea"></textarea>
+          <br/>
+        </form>
+      </dd>
+      
+      <dt v-if="(day == -1 || day == 5) && menus[5] && menus[5][0]"><sub>{{_today.getDayOfWeek(5)}}: </sub></dt>
+      <dd v-if="(day == -1 || day == 5) && menus[5] && menus[5][0]" v-for="menu in menus[5]">
+        <span v-if="!edit">
+        <p v-if="menu.info"><i>info: </i>{{menu.info}}</p>
+        <p v-if="menu.breakfast"><i>śniadanie: </i>{{menu.breakfast}}</p>
+        <p v-if="menu.lunch"><i>obiad: </i>{{menu.lunch}}</p>
+        <p v-if="menu.tea"><i>podwieczorek: </i>{{menu.tea}}</p>
+        <small v-if="user && (user.realm == 'M' || user.realm == 'V')"><i>
+            <a v-if="day != -1" v-bind:href="hrefs.return">(powrót)</a>
+            <a v-if="day == -1" v-bind:href="hrefs.menu5">(szczegóły)</a>
+          </i> 
+          <a v-if="hrefs.menu5edit" v-bind:href="hrefs.menu5edit">(edycja)</a>
+        </small>
+
+        </span>
+        <form v-if="edit" action="">
+          <label>akcje:</label>
+          <button type="reset" v-on:click.prevent="returnMenu">powrót</button> - 
+          <button type="submit" v-on:click.prevent="saveMenu">zapisz</button>
+          <br/>
+          <br/>
+          <label for="info">info:</label>
+          <textarea id="info" v-model="menus[5][0].info"></textarea>
+          <br/>
+          <label for="breakfast">śniadanie:</label>
+          <textarea id="breakfast" v-model="menus[5][0].breakfast">
+          </textarea>
+          <br/>
+          <label for="lunch">obiad:</label>
+          <textarea id="lunch" v-model="menus[5][0].lunch"></textarea>
+          <br/>
+          <label for="tea">podwieczorek:</label>
+          <textarea id="tea" v-model="menus[5][0].tea"></textarea>
+          <br/>
+        </form>
+      </dd>
+      
+    </dl>
+  </section>
+
+
+  <script src="/js/app.js"></script>
+  <script type="text/javascript">
+  Date.prototype.getWeek = function() {var onejan = new Date(this.getFullYear(),0,1);return Math.ceil((((this - onejan) / 86400000) + onejan.getDay()+1)/7);}
+  Date.prototype.getDayOfWeek = function(day){ return ["niedziela","poniedziałek","wtorek","środa","czwartek","piątek","sobota"][ day ];};
+  var _hash = window.location.hash;
+  var _today = new Date();
+  
+  var app = new Vue({
+    el: '#app',
+    data: {
+      accessToken: '',
+      userId: '',
+      user: null,
+      weekNum: -1,
+      year: _today.getFullYear(),
+      day: -1,
+      edit: false,
+      hrefs: {},
+      menus: {},
+      prices: {}
+    },
+    beforeMount: function() {
+      this.accessToken = sessionStorage.getItem('accessToken');
+      this.userId = sessionStorage.getItem('userId');
+      this.user = JSON.parse(sessionStorage.getItem('user'));
+      
+      if(_hash.length > 0 && _hash.indexOf('#!/') == 0){
+        var _hashArr = _hash.split('/');
+        _hashArr.shift();
+
+        if(_hashArr.length>0) this.year = _hashArr.shift();
+        if(_hashArr.length>0) this.weekNum = _hashArr.shift();
+        if(_hashArr.length>0) this.day = _hashArr.shift();
+        if(_hashArr.length>0) this.edit = _hashArr.shift();
+      }
+
+      if(this.weekNum == -1 || !this.userId)
+        location.href = '/';      
+      else {
+        this.hrefs.return = './#!/'+this.year+'/'+this.weekNum+'';
+        this.hrefs.menu0 = './#!/'+this.year+'/'+this.weekNum+'/0';
+        this.hrefs.menu0edit = './#!/'+this.year+'/'+this.weekNum+'/0/edit';
+        this.hrefs.menu1 = './#!/'+this.year+'/'+this.weekNum+'/1';
+        this.hrefs.menu1edit = './#!/'+this.year+'/'+this.weekNum+'/1/edit';
+        this.hrefs.menu2 = './#!/'+this.year+'/'+this.weekNum+'/2';
+        this.hrefs.menu2edit = './#!/'+this.year+'/'+this.weekNum+'/2/edit';
+        this.hrefs.menu3 = './#!/'+this.year+'/'+this.weekNum+'/3';
+        this.hrefs.menu3edit = './#!/'+this.year+'/'+this.weekNum+'/3/edit';
+        this.hrefs.menu4 = './#!/'+this.year+'/'+this.weekNum+'/4';
+        this.hrefs.menu4edit = './#!/'+this.year+'/'+this.weekNum+'/4/edit';
+        this.hrefs.menu5 = './#!/'+this.year+'/'+this.weekNum+'/5';
+        this.hrefs.menu5edit = './#!/'+this.year+'/'+this.weekNum+'/5/edit';
+        this.hrefs.menu6 = './#!/'+this.year+'/'+this.weekNum+'/6';
+        this.hrefs.menu6edit = './#!/'+this.year+'/'+this.weekNum+'/6/edit';
+        if(this.year== _today.getFullYear() && this.weekNum==_today.getWeek()){
+          this.hrefs.menu0edit = this.hrefs.menu1edit = this.hrefs.menu2edit = this.hrefs.menu3edit = this.hrefs.menu4edit = this.hrefs.menu5edit = this.hrefs.menu6edit = false;
+        }
+        //
+        this.$http.get('/api/menus?filter[where][year]='+ this.year +'&filter[where][week]=' + this.weekNum+'&filter[order]=day ASC').then(
+          function(sucess) {
+            this.menus = [[],[],[],[],[],[],[],[]];
+            this.menus[0]= sucess.body.filter(function(menu){ if(menu.day == 0) return menu; });
+            this.menus[1]= sucess.body.filter(function(menu){ if(menu.day == 1) return menu; });
+            this.menus[2]= sucess.body.filter(function(menu){ if(menu.day == 2) return menu; });
+            this.menus[3]= sucess.body.filter(function(menu){ if(menu.day == 3) return menu; });
+            this.menus[4]= sucess.body.filter(function(menu){ if(menu.day == 4) return menu; });
+            this.menus[5]= sucess.body.filter(function(menu){ if(menu.day == 5) return menu; });
+            this.menus[6]= sucess.body.filter(function(menu){ if(menu.day == 6) return menu; });
+          },function(error) {}
+        );
+        this.$http.get('/api/menu-prices?filter[where][year]='+ this.year +'&filter[order]=week&filter[limit]=1').then(
+          function(sucess) {
+            this.prices = sucess.body.shift();
+          },function(error) {}
+        );
+      }
+    },
+    methods: {
+      returnMenu: function(){
+        location.href = './#!/'+ this.year +'/' + this.weekNum+'';
+      },
+
+      saveMenu: function(){
+        var _id=this.menus[this.day][0].id
+        this.$http.put('/api/menus/'+_id, JSON.stringify(this.menus[this.day][0])).then(
+
+        
+          function(sucess) {
+            console.log(sucess)
+            location.href = './#!/'+ this.year +'/' + this.weekNum+'';
+
+          },function(error) {}
+        );
+      },
+
+      copyMenu: function(){
+        console.log(this.menus)
+        // location.href = './#!/'+ this.year +'/' + this.weekNum+'/' + this.day;
+      }
+    }
+    
+  })
+  </script>
+</body>

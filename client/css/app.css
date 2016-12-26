@@ -1,0 +1,34 @@
+
+body{
+	padding: 0.5rem;
+}
+label {
+    // width: 5rem;
+    // text-align: right;
+    // display: inline-block;
+    // font-size: 0.7rem;
+  }
+  *[v-cloak]{
+    display: none;
+  }
+  dt {
+    margin: 2rem 0 .2rem;
+  }
+  dd {
+   margin: .2rem  .2rem  .2rem 3rem ; 
+  }
+  dd p {
+    margin: 0 0 .2rem;
+  }
+  dd i {
+    width: 8rem;
+    text-align: right;
+    display: inline-block;
+  }
+  textarea,input{
+
+    min-width: 30rem;
+    max-width: 30rem;
+
+  }
+  
