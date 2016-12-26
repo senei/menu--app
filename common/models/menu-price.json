@@ -1,5 +1,5 @@
 {
-  "name": "menu_price",
+  "name": "menu-price",
   "base": "PersistedModel",
   "strict": false,
   "idInjection": true,

@@ -31,16 +31,7 @@
   },
   "validations": [],
   "relations": {
-    "diner": {
-      "type": "belongsTo",
-      "model": "diner",
-      "foreignKey": "dinerId"
-    },
-    "menu": {
-      "type": "belongsTo",
-      "model": "menu",
-      "foreignKey": "menuId"
-    }
+    
   },
   "acls": [],
   "methods": {}
