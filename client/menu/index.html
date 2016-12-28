@@ -17,17 +17,28 @@
 </head>
 
 <body onhashchange="location.reload()">
-  <h1 style="font-size: 0.8rem;margin: 0;">Menus -- Menu <small>master</small>:)</h1>
+  <h1>Menu <small>master</small> :)</h1>
+  <p><a href="/">< </a> Menu </p>
   <section id="app">
-    
-    <dl v-cloak><!-- //  -->
-      <dt><sub>info:</sub></dt>
-      <dd v-if="user">witam {{ user.username }} <small v-if="user.realm!='C'">( {{user.realm}}<span v-if="user.realm=='M'"> - master</span><span v-if="user.realm=='V'"> - vendor</span> )</small></dd>
+    <dl v-cloak>
+      <dt>info:</dt>
+      <dd v-if="user">{{ user.username }} <small v-if="user.realm!='C'">( {{user.realm}}<span v-if="user.realm=='M'"> - master</span><span v-if="user.realm=='V'"> - vendor</span> )</small></dd>
       <dd v-if="weekNum!=-1">wybrałeś {{weekNum}} tydzień {{year}} roku<span v-if="day!=-1">, dzień {{day}}</span></dd>
-      <dd v-if="prices">cena {{prices.sum}}<small>zł</small> <small>- śniadanie: {{prices.breakfast}}<small>zł</small>, obiad: {{prices.lunch}}<small>zł</small>, podwieczorek: {{prices.tea}}<small>zł</small></small>
-      <!-- data -->
-      <!-- todo: auto generate menu -->
-      <dt v-if="(day == -1 || day == 1) && menus[1] && menus[1][0]"><sub>{{_today.getDayOfWeek(1)}}: </sub></dt>
+      <dd v-if="prices">
+        cena {{prices.sum}}<small>zł</small> 
+        <small>
+        - śniadanie: {{prices.breakfast}}<small>zł</small>, 
+          obiad: {{prices.lunch}}<small>zł</small>, 
+          podwieczorek: {{prices.tea}}<small>zł</small>
+        </small>
+        <a v-if="weekNum!=-1 && ( user.realm=='M' || user.realm=='V' ) " v-bind:href="hrefs.prices"> - edycja </a>
+      </dd>
+      <dd v-if="info"><small>{{ info }}</small></dd>
+
+      <dt v-if="(day == -1 || day == 1)">{{_today.getDayOfWeek(1)}}: </dt>
+      <dd v-if="(day == -1 || day == 1) && menus[1].length == 0"> 
+        <a v-if="!edit" v-bind:href="hrefs.menu1edit">( dodaj )</a> 
+      </dd>
       <dd v-if="(day == -1 || day == 1) && menus[1] && menus[1][0]" v-for="menu in menus[1]">
         <span v-if="!edit">
           <p v-if="menu.info"><i>info: </i>{{menu.info}}</p>
@@ -42,29 +53,29 @@
             <a v-bind:href="hrefs.menu1edit">(edycja)</a>
           </small>
         </span>
+        <!-- edit -->
         <form v-if="edit" action="">
-          <label>akcje:</label>
-          <button type="reset" v-on:click.prevent="returnMenu">powrót</button> - 
-          <button type="submit" v-on:click.prevent="saveMenu">zapisz</button>
-          <br/>
+          <button type="reset" class="button secondary hollow small" v-on:click.prevent="returnMenu">powrót</button> 
+          <button type="submit" class="button primary hollow small" v-on:click.prevent="saveMenu">zapisz</button>
           <br/>
           <label for="info">info:</label>
           <textarea id="info" v-model="menus[1][0].info"></textarea>
-          <br/>
           <label for="breakfast">śniadanie:</label>
           <textarea id="breakfast" v-model="menus[1][0].breakfast">
           </textarea>
-          <br/>
           <label for="lunch">obiad:</label>
           <textarea id="lunch" v-model="menus[1][0].lunch"></textarea>
-          <br/>
           <label for="tea">podwieczorek:</label>
           <textarea id="tea" v-model="menus[1][0].tea"></textarea>
           <br/>
+          <button type="reset" class="button secondary hollow small" v-on:click.prevent="returnMenu">powrót</button> 
+          <button type="submit" class="button primary hollow small" v-on:click.prevent="saveMenu">zapisz</button>
+          
         </form>
       </dd>
       
-      <dt v-if="(day == -1 || day == 2) && menus[2] && menus[2][0]"><sub>{{_today.getDayOfWeek(2)}}: </sub></dt>
+      <dt v-if="(day == -1 || day == 2)">{{_today.getDayOfWeek(2)}}: </dt>
+      <dd v-if="(day == -1 || day == 2) && menus[2].length == 0"> <a v-bind:href="hrefs.menu2edit">( dodaj )</a> </dd>
       <dd v-if="(day == -1 || day == 2) && menus[2] && menus[2][0]" v-for="menu in menus[2]">
         <span v-if="!edit">
         <p v-if="menu.info"><i>info: </i>{{menu.info}}</p>
@@ -102,7 +113,8 @@
         </form>
       </dd>
       
-      <dt v-if="(day == -1 || day == 3) && menus[3] && menus[3][0]"><sub>{{_today.getDayOfWeek(3)}}: </sub></dt>
+      <dt v-if="(day == -1 || day == 3)">{{_today.getDayOfWeek(3)}}: </dt>
+      <dd v-if="(day == -1 || day == 3) && menus[3].length == 0"> <a v-bind:href="hrefs.menu3edit">( dodaj )</a> </dd>
       <dd v-if="(day == -1 || day == 3) && menus[3] && menus[3][0]" v-for="menu in menus[3]">
         <span v-if="!edit">
         <p v-if="menu.info"><i>info: </i>{{menu.info}}</p>
@@ -140,7 +152,8 @@
         </form>
       </dd>
       
-      <dt v-if="(day == -1 || day == 4) && menus[4] && menus[4][0]"><sub>{{_today.getDayOfWeek(4)}}: </sub></dt>
+      <dt v-if="(day == -1 || day == 4)">{{_today.getDayOfWeek(4)}}: </dt>
+      <dd v-if="(day == -1 || day == 4) && menus[4].length == 0"> <a v-bind:href="hrefs.menu4edit">( dodaj )</a> </dd>
       <dd v-if="(day == -1 || day == 4) && menus[4] && menus[4][0]" v-for="menu in menus[4]">
         <span v-if="!edit">
         <p v-if="menu.info"><i>info: </i>{{menu.info}}</p>
@@ -178,7 +191,8 @@
         </form>
       </dd>
       
-      <dt v-if="(day == -1 || day == 5) && menus[5] && menus[5][0]"><sub>{{_today.getDayOfWeek(5)}}: </sub></dt>
+      <dt v-if="(day == -1 || day == 5)">{{_today.getDayOfWeek(5)}}: </dt>
+      <dd v-if="(day == -1 || day == 5) && menus[5].length == 0"> <a v-bind:href="hrefs.menu5edit">( dodaj )</a> </dd>
       <dd v-if="(day == -1 || day == 5) && menus[5] && menus[5][0]" v-for="menu in menus[5]">
         <span v-if="!edit">
         <p v-if="menu.info"><i>info: </i>{{menu.info}}</p>
@@ -229,7 +243,7 @@
   var app = new Vue({
     el: '#app',
     data: {
-      accessToken: '',
+      info: '',
       userId: '',
       user: null,
       weekNum: -1,
@@ -241,7 +255,6 @@
       prices: {}
     },
     beforeMount: function() {
-      this.accessToken = sessionStorage.getItem('accessToken');
       this.userId = sessionStorage.getItem('userId');
       this.user = JSON.parse(sessionStorage.getItem('user'));
       
@@ -258,40 +271,65 @@
       if(this.weekNum == -1 || !this.userId)
         location.href = '/';      
       else {
-        this.hrefs.return = './#!/'+this.year+'/'+this.weekNum+'';
-        this.hrefs.menu0 = './#!/'+this.year+'/'+this.weekNum+'/0';
-        this.hrefs.menu0edit = './#!/'+this.year+'/'+this.weekNum+'/0/edit';
-        this.hrefs.menu1 = './#!/'+this.year+'/'+this.weekNum+'/1';
-        this.hrefs.menu1edit = './#!/'+this.year+'/'+this.weekNum+'/1/edit';
-        this.hrefs.menu2 = './#!/'+this.year+'/'+this.weekNum+'/2';
-        this.hrefs.menu2edit = './#!/'+this.year+'/'+this.weekNum+'/2/edit';
-        this.hrefs.menu3 = './#!/'+this.year+'/'+this.weekNum+'/3';
-        this.hrefs.menu3edit = './#!/'+this.year+'/'+this.weekNum+'/3/edit';
-        this.hrefs.menu4 = './#!/'+this.year+'/'+this.weekNum+'/4';
-        this.hrefs.menu4edit = './#!/'+this.year+'/'+this.weekNum+'/4/edit';
-        this.hrefs.menu5 = './#!/'+this.year+'/'+this.weekNum+'/5';
-        this.hrefs.menu5edit = './#!/'+this.year+'/'+this.weekNum+'/5/edit';
-        this.hrefs.menu6 = './#!/'+this.year+'/'+this.weekNum+'/6';
-        this.hrefs.menu6edit = './#!/'+this.year+'/'+this.weekNum+'/6/edit';
-        if(this.year== _today.getFullYear() && this.weekNum==_today.getWeek()){
+        this.hrefs.return     = './#!/' + this.year + '/' + this.weekNum;
+        this.hrefs.prices     = '/prices/#!/' + this.year + '/'+ this.weekNum
+        //
+        this.hrefs.menu0      = this.hrefs.return + '/0';
+        this.hrefs.menu0edit  = this.hrefs.return + '/0/edit';
+        this.hrefs.menu1      = this.hrefs.return + '/1';
+        this.hrefs.menu1edit  = this.hrefs.return + '/1/edit';
+        this.hrefs.menu2      = this.hrefs.return + '/2';
+        this.hrefs.menu2edit  = this.hrefs.return + '/2/edit';
+        this.hrefs.menu3      = this.hrefs.return + '/3';
+        this.hrefs.menu3edit  = this.hrefs.return + '/3/edit';
+        this.hrefs.menu4      = this.hrefs.return + '/4';
+        this.hrefs.menu4edit  = this.hrefs.return + '/4/edit';
+        this.hrefs.menu5      = this.hrefs.return + '/5';
+        this.hrefs.menu5edit  = this.hrefs.return + '/5/edit';
+        this.hrefs.menu6      = this.hrefs.return + '/6';
+        this.hrefs.menu6edit  = this.hrefs.return + '/6/edit';
+        if(this.year == _today.getFullYear() && this.weekNum==_today.getWeek()){
           this.hrefs.menu0edit = this.hrefs.menu1edit = this.hrefs.menu2edit = this.hrefs.menu3edit = this.hrefs.menu4edit = this.hrefs.menu5edit = this.hrefs.menu6edit = false;
         }
         //
+        this.menus = [[],[],[],[],[],[],[]];
+        if(this.edit){
+        this.menus = [[],
+          [{"info": " -- wymyślamy -- ", "breakfast": null, "lunch":  null, "tea":  null, 
+          "year": this.year, "week": this.weekNum, "day": 1, "vendorId": this.userId }],
+          [{"info": " -- wymyślamy -- ", "breakfast": null, "lunch":  null, "tea":  null,
+          "year": this.year, "week": this.weekNum, "day": 2, "vendorId": this.userId }],
+          [{"info": " -- wymyślamy -- ", "breakfast": null, "lunch":  null, "tea":  null, 
+          "year": this.year, "week": this.weekNum, "day": 3, "vendorId": this.userId }],
+          [{"info": " -- wymyślamy -- ", "breakfast": null, "lunch":  null, "tea":  null,
+          "year": this.year, "week": this.weekNum, "day": 4, "vendorId": this.userId }],
+          [{"info": " -- wymyślamy -- ", "breakfast": null, "lunch":  null, "tea":  null,
+          "year": this.year, "week": this.weekNum, "day": 5, "vendorId": this.userId }],
+          []];
+        }
         this.$http.get('/api/menus?filter[where][year]='+ this.year +'&filter[where][week]=' + this.weekNum+'&filter[order]=day ASC').then(
           function(sucess) {
-            this.menus = [[],[],[],[],[],[],[],[]];
-            this.menus[0]= sucess.body.filter(function(menu){ if(menu.day == 0) return menu; });
-            this.menus[1]= sucess.body.filter(function(menu){ if(menu.day == 1) return menu; });
-            this.menus[2]= sucess.body.filter(function(menu){ if(menu.day == 2) return menu; });
-            this.menus[3]= sucess.body.filter(function(menu){ if(menu.day == 3) return menu; });
-            this.menus[4]= sucess.body.filter(function(menu){ if(menu.day == 4) return menu; });
-            this.menus[5]= sucess.body.filter(function(menu){ if(menu.day == 5) return menu; });
-            this.menus[6]= sucess.body.filter(function(menu){ if(menu.day == 6) return menu; });
-          },function(error) {}
+            var _menus_1 = sucess.body.filter(function(menu){ if(menu.day == 1) return menu; });
+            if( _menus_1.length>0) this.menus[1] = _menus_1;
+            var _menus_2 = sucess.body.filter(function(menu){ if(menu.day == 2) return menu; });
+            if( _menus_2.length>0) this.menus[2] = _menus_2;
+            var _menus_3 = sucess.body.filter(function(menu){ if(menu.day == 3) return menu; });
+            if( _menus_3.length>0) this.menus[3] = _menus_3;
+            var _menus_4 = sucess.body.filter(function(menu){ if(menu.day == 4) return menu; });
+            if( _menus_4.length>0) this.menus[4] = _menus_4;
+            var _menus_5 = sucess.body.filter(function(menu){ if(menu.day == 5) return menu; });
+            if( _menus_5.length>0) this.menus[5] = _menus_5;
+            this.$forceUpdate();
+          },function(error) {
+            console.log(error)
+          }
         );
+        
+      
         this.$http.get('/api/menu-prices?filter[where][year]='+ this.year +'&filter[order]=week&filter[limit]=1').then(
           function(sucess) {
             this.prices = sucess.body.shift();
+            this.$forceUpdate();
           },function(error) {}
         );
       }
@@ -302,16 +340,21 @@
       },
 
       saveMenu: function(){
-        var _id=this.menus[this.day][0].id
-        this.$http.put('/api/menus/'+_id, JSON.stringify(this.menus[this.day][0])).then(
-
-        
-          function(sucess) {
-            console.log(sucess)
-            location.href = './#!/'+ this.year +'/' + this.weekNum+'';
-
-          },function(error) {}
-        );
+        var _id = this.menus[this.day][0].id
+        if(_id) {
+          this.$http.put('/api/menus/'+_id, JSON.stringify(this.menus[this.day][0])).then(
+            function(sucess) {
+              location.href = './#!/'+ this.year +'/' + this.weekNum+'';
+            },function(error) {}
+          );
+        } else {
+          this.$http.post('/api/menus', JSON.stringify(this.menus[this.day][0])).then(
+            function(sucess) {
+              console.log(sucess)
+              location.href = './#!/'+ this.year +'/' + this.weekNum+'';
+            },function(error) {}
+          );
+        }
       },
 
       copyMenu: function(){

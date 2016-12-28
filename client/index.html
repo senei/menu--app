@@ -19,33 +19,33 @@
 </head>
 
 <body>
-  <h1 style="font-size: 0.8rem;margin: 0;">Menu
-    <small>master</small>:)</h1>
+  <h1>Menu <small>master</small> :)</h1>
   <section id="app">
     <p>Witaj {{ username }} <small v-if="user">( {{user.realm}} )</small></p>
     <form v-cloak v-if="accessToken==''" action="">
       <label for="user">login:</label>
-      <input id="user" v-model="username">
-      <br/>
+      <input id="user" v-model="username" type="text">
       <label for="pass">pass:</label>
       <input id="pass" v-model="pass" type="password">
-      <br/>
       <label for="btn"></label>
-      <button id="btn" v-on:click.prevent="logIn">login</button>
-      <br/>
+      <button id="btn" class="button primary hollow" v-on:click.prevent="logIn">login</button>
     </form>
-    <dl v-cloak v-if="user && user.realm == 'M'"> 
-    <dt><sub>info : </sub></dt>
+    <dl v-cloak v-if="user"> 
+    <dt>info : </dt>
     <dd> -- mamy {{weekNum}} tydzień {{year}} roku, dzień {{day}} -- </dd>
     <dd v-if="day>4 || day == 0"> -- czas na nowe menu -- </dd>
-    
-    <dt><sub>menu : </sub></dt>
+    <dd v-if="user.realm !='C'"> 
+      <a href="/menu/prices/#!/" class="button hollow tiny success">( CENNIK )</a> 
+      <a href="/diners/#!/" class="button hollow tiny">( KLIENCI )</a> 
+    </dd>
+
+    <dt>menu : </dt>
     <dd v-if="day < 6"> <a v-bind:href="hrefs.menuWeek">na ten tydzień ({{weekNum}})</a> </dd>
     <dd v-if="day < 6"> <a v-bind:href="hrefs.menu">na dziś</a> </dd>
     <dd v-if="day < 5"> <a v-bind:href="hrefs.menuNext">na jutro</a> </dd>
     <dd v-if="day > 4 || day == 0"> <a v-bind:href="hrefs.menuWeekNext">na następny tydzień ({{weekNum + 1}})</a> </dd>
     
-    <dt><sub>zamówienia : </sub></dt>
+    <dt>zamówienia : </dt>
     <dd v-if="day < 6"> <a v-bind:href="hrefs.ordersWeek">na aktualne menu</a> </dd>
     <dd v-if="day < 6"> <a v-bind:href="hrefs.orders">na dziś</a> </dd>
     <dd v-if="day < 5"> <a v-bind:href="hrefs.ordersNext">na jutro</a> </dd>
@@ -100,7 +100,7 @@
             this.username = sucess.body.username;
             this.user = sucess.body;
             //path
-            if (this.user.realm == "M" && _hash.length > 0 && _hash.indexOf('!/') == 1) {
+            if (_hash.length > 0 && _hash.indexOf('!/') == 1) {
                _hash = _hash.substring(1).split('/');
                console.log(_hash[1], "day=", _hash[2]);
             }

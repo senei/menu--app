@@ -2,6 +2,9 @@
 body{
 	padding: 0.5rem;
 }
+h1{
+  font-size: 0.8rem;
+}
 label {
     // width: 5rem;
     // text-align: right;
@@ -12,7 +15,7 @@ label {
     display: none;
   }
   dt {
-    margin: 2rem 0 .2rem;
+    margin: 1rem 0 .2rem;
   }
   dd {
    margin: .2rem  .2rem  .2rem 3rem ; 
@@ -31,4 +34,5 @@ label {
     max-width: 30rem;
 
   }
+  form {font-size: 0.8rem;}
   
