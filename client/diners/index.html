@@ -28,10 +28,11 @@
       <dt v-if="filter.name!='new'">lista klientów:</dt>
       <dd v-if="filter.name!='new'" v-for="client in clients"> 
         <p> <i> <small>nazwa:</small> </i> <a v-on:click.prevent="goToDetails(client.id)"> {{ client.username }} </a> </p>
-        <p> <i> <small>email:</small> </i>  {{ client.email }} <span v-if="!client.emailVerified" title="nie potwierdzony">( N )</span></p>
+        <p> <i> <small>email:</small> </i>  {{ client.email }} <span v-if="!client.emailVerified" title="nie potwierdzony" style="cursor:help">( N )</span></p>
         <p> <i> <small>telefon:</small> </i>  {{ client.phone }} </p>
-        <p v-if="client.wallet"> <i> <small>wallet:</small> </i>  {{ client.wallet }} </p>
-        <hr/>
+        <p v-if="client.wallet"> <i> <small>portfel:</small> </i> {{ client.wallet }}<small>zł</small></p>
+        <p v-if="!client.wallet"> <i> <small>portfel:</small> </i> 0<small>zł</small></p>
+        <br/>
       </dd>
 
     </dl>
@@ -48,7 +49,7 @@
   var app = new Vue({
     el: '#app',
     data: {
-      info: '',
+      info: 'filtr urzytkowników w url-u',
       userId: '',
       user: null,
       filter: {},
@@ -77,6 +78,11 @@
         this.$http.get('/api/users?filter[where][realm]=C').then(
           function(sucess) {
             this.clients = sucess.body;
+            if(_f = this.filter.name){
+              var filtred = sucess.body.filter(function(user){ if(user.username.indexOf(_f) !==-1) return user; })
+              if(filtred.length>0)
+                this.clients = filtred;
+            }
             this.clientsData = {
               "count": sucess.body.length,
               "verified": sucess.body.filter(function(user){ if(user.emailVerified == true) return user; }).length,
@@ -88,7 +94,6 @@
     },
     methods: {
       goToDetails: function(id){
-        alert(id)
         location.href = './details/#!/'+id;
       }
     }

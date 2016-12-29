@@ -24,7 +24,7 @@ label {
     margin: 0 0 .2rem;
   }
   dd i {
-    width: 8rem;
+    width: 5rem;
     text-align: right;
     display: inline-block;
   }
@@ -33,6 +33,12 @@ label {
     min-width: 30rem;
     max-width: 30rem;
 
+  }
+  input.cashIn{
+    max-width: 5rem;
+    min-width: auto;
+    height: 1.6rem;
+    text-align: right;
   }
   form {font-size: 0.8rem;}
   

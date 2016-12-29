@@ -124,7 +124,7 @@
     methods: {
       logIn: function() {
         if (this.userId != '') {
-          this.$route.ruter.go('/')
+          location.href = '/';
         }
         if (this.username != '') {
           console.log(this.user + "@" + this.pass)
