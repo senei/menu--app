@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A layout example with a side menu that hides on mobile, just like the Pure website.">
+  <title>User -- (: menu master :)</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/purecss@0.6.1/build/pure-min.css" integrity="sha384-CCTZv2q9I9m3UOxRLaJneXrrqKwUNOzZ6NGEUMwHtShDJ+nCoiXJCAgi05KfkLGY" crossorigin="anonymous">
+  <link rel="stylesheet" href="/assets/css/side-menu.css">
+  <link rel="stylesheet" href="/assets/css/forms.css">
+
+
+</head>
+
+<body onhashchange="location.reload()">
+
+  <div id="main">
+    <a href="#menu" id="menuLink" class="menu-link">
+      <span></span>
+    </a>
+
+    <div id="menu">
+      <div class="pure-menu">
+        <a class="pure-menu-heading" href="/user/#/">
+          <small>menu master:</small>
+        </a>
+
+        <ul class="pure-menu-list">
+          <li class="pure-menu-item ">&nbsp;</li>
+          <li v-if="!user.id" class="pure-menu-item ">
+            <a href="/user/#/create" v-bind:class="sidebar.create" class="pure-menu-link">rejetracja</a>
+          </li>
+          <li v-if="user.id" class="pure-menu-item ">
+            <a href="/user/#/update" v-bind:class="sidebar.update" class="pure-menu-link">ustawienia</a>
+          </li>
+          <li class="pure-menu-item ">&nbsp;</li>
+          <li v-if="!user.id" class="pure-menu-item ">
+            <a href="/user/#/login" v-bind:class="sidebar.login" class="pure-menu-link">login</a>
+          </li>
+          <li v-if="user.id" class="pure-menu-item ">
+            <a href="/user/#/logout" class="pure-menu-link">logout</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <section id="con" class="content" v-cloak>
+
+      <div class="header" v-if="user.data != undefined && sidebar.login =='' ">
+        Witamy:
+        <br/>
+        <strong :data-verified="user.data.emailVerified">{{user.data.username}}
+          <small>({{user.data.email}})</small>
+        </strong>
+        <br/>
+        <span class="clickable" v-on:click="cashIn">
+          <small>w portfelu masz:</small>
+          <span>{{user.data.wallet?user.data.wallet:0}}
+            <small>zł</small>
+          </span>
+          <small v-if="form.order.sum>0"> a zamawiasz za {{form.order.sum}}
+            <small>zł</small> 
+          </small>
+        </span>
+        <br/>
+        <form id="diners" class="pure-form ">
+          <fieldset>
+            <legend>
+              <small>cennik:</small>
+            </legend>
+            <small>
+              <i>całość:</i> {{price.sum}}
+              <small>zł</small>
+              <span>=</span>
+            </small>
+            <small>
+              <i>śniadanie:</i> {{price.breakfast}}
+              <small>zł</small> 
+              <span>+</span>
+            </small>
+            <small>
+              <i>obiad:</i> {{price.lunch}}
+              <small>zł</small>
+              <span>+</span>
+            </small>
+            <small>
+              <i>podwieczorek:</i> {{price.tea}}
+              <small>zł</small>
+            </small>
+          </fieldset>
+          <fieldset>
+            <legend>zamawaisz dla:</legend>
+            <span v-if="user.diners.length == 0">
+              nikogo -- dodaj odbiorcę w ustawieniach
+            </span>
+            <span v-if="user.diners.length == 1">
+              <input type="hidden" v-model="dinersSelected" :value="user.diners[0].id">
+              <span>{{user.diners[0].name}}</span>
+            </span>
+            <span v-if="user.diners.length > 1" v-for=" diner,index in user.diners">
+              <input type="checkbox" v-on:click="clearOrder(diner.id)" v-model="dinersSelected" :value="diner.id">
+              <span>{{diner.name}}</span>
+              <span> | </span>
+            </span>
+            <button type="submit" v-on:click.prevent="buy" class="pure-button pure-button-primary"> Zamów </button>
+          </fieldset>
+        </form>
+      </div>
+
+
+
+      <div class="pure-g" v-if="menus.length==6 && this.sidebar.index == true ">
+        <div class="pure-u-1-5 hint">
+        </div>
+        <div id="order" class="pure-menu pure-u-3-5">
+
+          <h3>
+            <small>menu na</small>
+            <span>{{current.week}} tydzień</span>
+            <small>{{current.year}} roku</small>
+          </h3>
+          <a href="./#" v-bind:class="form.day[1]" v-on:click.prevent="order(1,0, $event)" class="pure-menu-heading pure-menu-link">poniedziałek : <small>{{menus[1].info}}</small></a>
+          <ul class="pure-menu-list">
+            <li class="pure-menu-item" v-if="menus[1].breakfast">
+              <a href="./#" v-bind:class="form.day[1]" v-on:click.prevent="order(1,1, $event)" class=" pure-menu-link">{{menus[1].breakfast}}</a>
+            </li>
+            <li class="pure-menu-item" v-if="menus[1].lunch">
+              <a href="./#" v-bind:class="form.day[1]" v-on:click.prevent="order(1,2, $event)" class=" pure-menu-link">{{menus[1].lunch}}</a>
+            </li>
+            <li class="pure-menu-item" v-if="menus[1].lunch">
+              <a href="./#" v-bind:class="form.day[1]" v-on:click.prevent="order(1,3, $event)" class=" pure-menu-link">{{menus[1].tea}}</a>
+            </li>
+          </ul>
+          <br/>
+          <a href="./#" v-bind:class="form.day[2]" v-on:click.prevent="order(2,0, $event)" class="pure-menu-heading pure-menu-link">wtorek : <small>{{menus[2].info}}</small></a>
+          <ul class="pure-menu-list">
+            <li class="pure-menu-item" v-if="menus[2].breakfast">
+              <a href="./#" v-bind:class="form.day[2]" v-on:click.prevent="order(2,1, $event)" class=" pure-menu-link">{{menus[2].breakfast}}</a>
+            </li>
+            <li class="pure-menu-item" v-if="menus[2].lunch">
+              <a href="./#" v-bind:class="form.day[2]" v-on:click.prevent="order(2,2, $event)" class=" pure-menu-link">{{menus[2].lunch}}</a>
+            </li>
+            <li class="pure-menu-item" v-if="menus[2].tea">
+              <a href="./#" v-bind:class="form.day[2]" v-on:click.prevent="order(2,3, $event)" class=" pure-menu-link">{{menus[2].tea}}</a>
+            </li>
+          </ul>
+          <br/>
+          <a href="./#" v-bind:class="form.day[3]" v-on:click.prevent="order(3,0, $event)" class="pure-menu-heading pure-menu-link">środa : <small>{{menus[3].info}}</small></a>
+          <ul class="pure-menu-list">
+            <li class="pure-menu-item" v-if="menus[3].breakfast">
+              <a href="./#" v-bind:class="form.day[3]" v-on:click.prevent="order(3,1, $event)" class=" pure-menu-link">{{menus[3].breakfast}}</a>
+            </li>
+            <li class="pure-menu-item" v-if="menus[3].lunch">
+              <a href="./#" v-bind:class="form.day[3]" v-on:click.prevent="order(3,2, $event)" class=" pure-menu-link">{{menus[3].lunch}}</a>
+            </li>
+            <li class="pure-menu-item" v-if="menus[3].tea">
+              <a href="./#" v-bind:class="form.day[3]" v-on:click.prevent="order(3,3, $event)" class=" pure-menu-link">{{menus[3].tea}}</a>
+            </li>
+          </ul>
+          <br/>
+          <a href="./#" v-bind:class="form.day[4]" v-on:click.prevent="order(4,0, $event)" class="pure-menu-heading pure-menu-link">czwartek : <small>{{menus[4].info}}</small></a>
+          <ul class="pure-menu-list">
+            <li class="pure-menu-item" v-if="menus[4].breakfast">
+              <a href="./#" v-bind:class="form.day[4]" v-on:click.prevent="order(4,1, $event)" class=" pure-menu-link">{{menus[4].breakfast}}</a>
+            </li>
+            <li class="pure-menu-item" v-if="menus[4].lunch">
+              <a href="./#" v-bind:class="form.day[4]" v-on:click.prevent="order(4,2, $event)" class=" pure-menu-link">{{menus[4].lunch}}</a>
+            </li>
+            <li class="pure-menu-item" v-if="menus[4].tea">
+              <a href="./#" v-bind:class="form.day[4]" v-on:click.prevent="order(4,3, $event)" class=" pure-menu-link">{{menus[4].tea}}</a>
+            </li>
+          </ul>
+          <br/>
+          <a href="./#" v-bind:class="form.day[5]" v-on:click.prevent="order(5,0, $event)" class="pure-menu-heading pure-menu-link">piątek : <small>{{menus[5].info}}</small></a>
+          <ul class="pure-menu-list">
+            <li class="pure-menu-item" v-if="menus[5].breakfast">
+              <a href="./#" v-bind:class="form.day[5]" v-on:click.prevent="order(5,1, $event)" class=" pure-menu-link">{{menus[5].breakfast}}</a>
+            </li>
+            <li class="pure-menu-item" v-if="menus[5].lunch">
+              <a href="./#" v-bind:class="form.day[5]" v-on:click.prevent="order(5,2, $event)" class=" pure-menu-link">{{menus[5].lunch}}</a>
+            </li>
+            <li class="pure-menu-item" v-if="menus[5].tea">
+              <a href="./#" v-bind:class="form.day[5]" v-on:click.prevent="order(5,3, $event)" class=" pure-menu-link">{{menus[5].tea}}</a>
+            </li>
+          </ul>
+          <br/>
+          <br/>
+
+        </div>
+        <div class="pure-u-1-5 hint">
+
+          <br>
+          <small>info:
+          </small>
+            <ul class="pure-menu-list">
+              <li class="pure-menu-item">
+                <a href="./#" class="disabled pure-menu-link" title="zablokowane przez datę"> -- zablokowane -- </a>
+              </li>
+              <li class="pure-menu-item">
+                <a href="./#" class="selected pure-menu-link" title="wybrane w obecnym zamówieniu"> -- wybrane -- </a>
+              </li>
+              <li class="pure-menu-item">
+                <a href="./#" class="ordered pure-menu-link" title="zamówione wcześniej"> -- zamówione -- </a>
+              </li>
+            </ul>
+        </div>
+      </div>
+
+
+      <div class="pure-g" v-if="user.diners != undefined && sidebar.update != '' ">
+        <div class="pure-u-1-5">
+          <h5 class="clickable">
+            Zamawiasz dla:
+            <br/>
+            <small v-on:click="dinerAdd">(dodaj)</small>
+          </h5>
+        </div>
+        <div class="pure-u-3-5">
+          <dl>
+            <dt v-if="'new' == form.formId">
+              <form action="" class="pure-form pure-form-stacked" id="new">
+                <input type="hidden" name="csr" :value="user.accessToken">
+                <fieldset>
+                  <label for="name">Imie:</label>
+                  <input id="name" v-bind:class="form.error.diner.name" v-model="form.diner.name" type="text" placeholder=" -- imie dziecka -- ">
+                  <label for="name">Wiek:</label>
+                  <input id="name" v-bind:class="form.error.diner.age" v-model="form.diner.age" type="number">
+                  <label for="name">Bio:</label>
+                  <input id="name" v-bind:class="form.error.diner.bio" v-model="form.diner.bio" type="text" placeholder=" -- opis dziecka -- ">
+                  <button type="submit" v-on:click.prevent="addDiner" class="pure-button pure-button-primary">Dodaj</button>
+                </fieldset>
+              </form>
+              <br/>
+            </dt>
+            <dd class="clickable" v-for="diner in user.diners">
+              <span v-on:click="dinerEdit(diner.id)">
+                {{diner.name}} ({{diner.age}}
+                <small>lat</small>)
+                <br/>
+                <small>{{diner.bio}}</small>
+              </span>
+              <br/>
+
+              <form action="" v-if="diner.id == form.formId" class="pure-form pure-form-stacked" :id="diner.id">
+                <input type="hidden" name="csr" :value="user.accessToken">
+                <fieldset>
+                  <label for="name">Imie:</label>
+                  <input id="name" v-bind:class="form.error.diner.name" v-model="diner.name" type="text">
+                  <label for="name">Wiek:</label>
+                  <input id="name" v-bind:class="form.error.diner.age" v-model="diner.age" type="number">
+                  <label for="name">Bio:</label>
+                  <input id="name" v-bind:class="form.error.diner.bio" v-model="diner.bio" type="text">
+                  <button type="submit" v-on:click.prevent="editDiner" class="pure-button pure-button-primary">Zapisz</button>
+                  <button type="reset" v-on:click.prevent="deleteDiner" class="pure-button pure-button-se">Usuń</button>
+                </fieldset>
+              </form>
+              <br/>
+            </dd>
+          </dl>
+        </div>
+      </div>
+
+      <div class="pure-g clickable" v-if="user.address != undefined && sidebar.update != ''">
+        <hr class="pure-u-1-1">
+        <div class="pure-u-1-5">
+          <h5>Twoje dane:</h5>
+        </div>
+        <div class="pure-u-3-5">
+          <dl v-on:click="addressEdit(user.address.id)">
+            <dd>
+              <small>imie i nazwisko:</small>
+              {{user.address.recipient}}
+            </dd>
+            <dd>
+              <small>ulica:</small>
+              {{user.address.street}}
+            </dd>
+          </dl>
+          <dl v-if="user.address.id == form.formId">
+            <dt>
+              <form action="" class="pure-form pure-form-stacked" :id="user.address.id">
+                <input type="hidden" name="csr" :value="user.accessToken">
+                <fieldset>
+                  <label for="name">Imie i nazwisko:</label>
+                  <input id="name" v-model="user.address.recipient" type="text">
+                  <label for="name">Ulica:</label>
+                  <input id="name" v-model="user.address.street" type="text">
+                  <label for="name">Telefon:</label>
+                  <input id="name" v-model="user.data.phone" type="text">
+                  <button type="submit" v-on:click.prevent="changeAdress" class="pure-button pure-button-primary">Zapisz</button>
+                </fieldset>
+              </form>
+            </dt>
+          </dl>
+        </div>
+      </div>
+
+
+      <div class="header" v-if="user.data == undefined && sidebar.create != '' ">
+        Witamy:
+        <br/>
+        <strong data-verified="false">{{form.user.username}}
+          <small>({{form.user.email}})</small>
+        </strong>
+        <br/>
+        <small style="font-size: 0.7rem">wypełniej poniższe pola aby otrzymać dostęp do aplikacji</small>
+      </div>
+
+      <div class="pure-g" v-if="user.data == undefined && sidebar.create != ''">
+        <div class="pure-menu pure-u-3-5">
+          <br/>
+          <form action="" class="pure-form pure-form-stacked">
+            <fieldset>
+              <legend>dane logowania:</legend>
+              <label for="login">Login <sup>*</sup>:</label>
+              <input id="login" v-bind:class="form.error.login" v-model="form.user.username" type="text" placeholder=" -- login -- ">
+              <br/>
+              <label for="email">Email <sup>*</sup>:</label>
+              <input id="email" v-bind:class="form.error.email" v-model="form.user.email" type="text" placeholder=" -- e-mail -- ">
+              <br/>
+              <label for="pass">Password <sup>*</sup>:</label>
+              <input id="pass" v-bind:class="form.error.pass" v-model="form.user.password" type="password" placeholder=" -- pass -- ">
+              <br/>
+            </fieldset>
+            <fieldset>
+              <legend>zamawiadz dla:</legend>
+              <label for="dinerName">Imie <sup>*</sup>:</label>
+              <input id="dinerName" v-bind:class="form.error.diner.name" v-model="form.diner.name" type="text" placeholder=" -- imie dziecka -- ">
+              <br/>
+              <label for="dinerAge">Wiek:</label>
+              <input id="dinerAge" v-bind:class="form.error.diner.age" v-model="form.diner.age" type="number" placeholder=" -- 5 - 16 -- " min="5" max="16">
+              <br/>
+              <label for="dinerBio">Bio:</label>
+              <input id="dinerBio" v-bind:class="form.error.diner.bio" v-model="form.diner.bio" type="text" placeholder=" -- opis dziecka -- ">
+              <br/>
+            </fieldset>
+            <fieldset>
+              <legend>twoje dane:</legend>
+              <label for="addressRecipient">Imie i nazwisko:</label>
+              <input id="addressRecipient" v-model="form.address.recipient" type="text" placeholder=" -- imie nazwisko -- ">
+              <br/>
+              <label for="addressStreet">Ulica:</label>
+              <input id="addressStreet" v-model="form.address.street" type="text" placeholder=" -- ulica nr-domu/nr-mieszkania -- ">
+              <br/>
+              <label for="addressPhone">Telefon:</label>
+              <input id="addressPhone" v-model="form.phone" type="text" placeholder=" -- 000-111-222 -- ">
+              <br/>
+            </fieldset>
+
+            <small style="font-size: 0.7rem">(*) - pola wymagane</small>
+            <br/>
+            <br/>
+            <button type="submit" v-on:click.prevent="save" class="pure-button pure-button-primary">Zapisz</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="pure-g" v-if="this.sidebar.login != '' ">
+        <div class="pure-menu pure-u-3-5">
+          <br/>
+          <form action="" class="pure-form pure-form-stacked">
+            <fieldset>
+              <label for="name">Login:</label>
+              <input id="name" v-bind:class="form.error.login" v-model="form.login.user" type="text" placeholder="login / e-mail">
+              <br/>
+              <label for="password">Password:</label>
+              <input id="password" v-bind:class="form.error.login" v-model="form.login.pass" type="password" placeholder=" password ">
+              <br/>
+              <br/>
+              <button type="submit" v-on:click.prevent="login" class="pure-button pure-button-primary">Zaloguj</button>
+            </fieldset>
+          </form>
+        </div>
+      </div>
+
+    </section>
+  </div>
+
+
+
+  <script src="/assets/vendor/vue.js"></script>
+  <script src="/assets/vendor/vue-resource.js"></script>
+  <!-- vue -->
+  <script src="/assets/js/user.js"></script>
+  <script src="/assets/js/ui.js"></script>
+
+</body>
+
+</html>

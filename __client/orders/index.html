@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+
+<head>
+  <title>diners -- menu master -- login</title>
+
+  <link rel="stylesheet" href="/css/foundation.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <style type="text/css">
+  </style>
+
+  <script src="/js/vendor/jquery.js"></script>
+  <script src="/js/vendor/what-input.js"></script>
+  <script src="/js/vendor/foundation.js"></script>
+  <!-- vue -->
+  <script src="/js/vendor/vue.js"></script>
+  <script src="/js/vendor/vue-resource.js"></script>
+</head>
+
+<body onhashchange="location.reload()">
+  <h1>Diners <small>master</small> :)</h1>
+  <p><a href="/diners/#!">< </a> Klienci / szczegóły </p>
+  <section id="app">
+    <dl v-cloak>
+      <dt>info:</dt>
+      <dd v-if="info"><small> -- {{ info }} -- </small></dd>
+      <dd v-if="client.data"><i><small>login:</small></i> {{client.data.username}} ( {{client.data.wallet}} <small>zł</small> )</dd>
+      <dd v-if="client.data"><i><small>telefon:</small></i> {{client.data.phone}}</dd>
+      <dd v-if="client.data"><i><small>email:</small></i> {{client.data.email}}</dd>
+      <dd v-if="client.data"><i></i> <a class="button hollow tiny" v-if="!filter.cashIn" v-on:click.prevent="cashIn(client.id)"> -- doładuj konto -- </a></dd>
+      <dd v-if="filter.cashIn"><input min="0" type="number" v-model="cashTransfer"> <a v-on:click.prevent="cashIn(client.id)" class="button hollow tiny" > -- doładuj -- </a></dd>
+
+      <dt v-if="client.diners">minnions:</dt>
+      <dd v-if="client.diners" v-for="diner in client.diners">
+        <i><small>nazwa:</small></i> <span>{{diner.name}}</span> <sub>({{diner.age}} lat)</sub><br/>
+        <i><small>telefon:</small></i> <small>{{diner.phone}}</small><br/><br/>
+      </dd>
+      
+      <dt v-if="client.address">adres:</dt>
+      <dd v-if="client.address"><i><small>adresat:</small></i> {{client.address.recipient}}</dd>
+      <dd v-if="client.address"><i><small>ulica:</small></i> {{client.address.street}}</dd>
+      <dd v-if="client.address"><i><small>kod:</small></i> {{client.address.postalCode}}</dd>
+      <dd v-if="client.address"><i><small>miasto:</small></i> {{client.address.locality}}</dd>
+
+    </dl>
+  </section>
+
+
+  <script src="/js/app.js"></script>
+  <script type="text/javascript">
+  Date.prototype.getWeek = function() {var onejan = new Date(this.getFullYear(),0,1);return Math.ceil((((this - onejan) / 86400000) + onejan.getDay()+1)/7);}
+  Date.prototype.getDayOfWeek = function(day){ return ["niedziela","poniedziałek","wtorek","środa","czwartek","piątek","sobota"][ day ];};
+  var _hash = window.location.hash;
+  var _today = new Date();
+  
+  var app = new Vue({
+    el: '#app',
+    data: {
+      info: '',
+      userId: '',
+      user: null,
+      id: '',
+      cashTransfer: 0,
+      client: {},
+      filter: {},
+      accessToken: ''
+      
+    },
+    beforeMount: function() {
+      this.userId = sessionStorage.getItem('userId');
+      this.user = JSON.parse(sessionStorage.getItem('user'));
+      this.accessToken = sessionStorage.getItem('accessToken');
+
+        console.log(_hash)
+
+      if(_hash.length > 0 && _hash.indexOf('#!/') == 0){
+        var _hashArr = _hash.split('/');
+        _hashArr.shift();
+        if(_hashArr.length>0) this.id = _hashArr.shift();
+        if(_hashArr.length>0) this.filter.email = _hashArr.shift();
+        if(_hashArr.length>0) this.filter.phone = _hashArr.shift();
+      }
+
+      if(!this.userId || this.user.realm == 'C')
+        location.href = '/';      
+      else {
+        
+        this.$http.get('/api/users/'+this.id).then(
+          function(sucess) {
+            this.client.data = sucess.body;            
+            if(!this.client.data.wallet)this.client.data.wallet=0;
+            this.$forceUpdate();
+          }, function(error) {}
+        )
+        this.$http.get('/api/users/'+this.id+'/address').then(
+          function(sucess) {
+            this.client.address = sucess.body;            
+            this.$forceUpdate();
+          }, function(error) {}
+        )
+        this.$http.get('/api/users/'+this.id+'/diners').then(
+          function(sucess) {
+            this.client.diners = sucess.body;            
+            this.$forceUpdate();
+          }, function(error) {}
+        )
+      }
+      
+    },
+    methods: {
+      passwordReset: function() {
+        // alert('zmieniono haslo na pass')
+        // http://0.0.0.0:3000/api/users/reset?access_token=JA4bWSMt1nafsOZzAOfAYpyF1VpmBuyI4iuPlBko69fUE2glgMJAfQAgOzS0ig7I
+
+      }, 
+      cashIn: function(){
+        if(this.filter.cashIn){
+          // this.client.data.wallet += this.cashTransfer;
+          // this.cashTransfer = 0;
+          this.$http.patch('/api/users/'+this.id+'?access_token='+this.accessToken, JSON.stringify({"wallet": this.client.data.wallet + this.cashTransfer})).then(
+            function(sucess) {
+              this.client.data.wallet += this.cashTransfer;
+              this.cashTransfer = 0;
+                      this.$forceUpdate();
+
+            },function(error) {}
+          );
+          //http://0.0.0.0:3000/api/users/5848756ec53446332fe11a40?access_token=bodgJ33g6ty03hRsZDkdzb7NUhWHt4yhAip6yCilypl5rn7UZcnxwSwt0UyqaPCv
+
+        } 
+        this.filter.cashIn = !this.filter.cashIn;     
+        this.$forceUpdate();
+
+      },
+      edit: function(){
+        // location.href = './#!/'+this.id+'/edit';
+      }
+    }
+    
+  })
+  </script>
+</body>

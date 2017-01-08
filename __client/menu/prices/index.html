@@ -73,7 +73,17 @@
 
   <script src="/js/app.js"></script>
   <script type="text/javascript">
-  Date.prototype.getWeek = function() {var onejan = new Date(this.getFullYear(),0,1);return Math.ceil((((this - onejan) / 86400000) + onejan.getDay()+1)/7);}
+  Date.prototype.getWeek = function () {  
+    var target  = new Date(this.valueOf());  
+    var dayNr   = (this.getDay() + 6) % 7;  
+    target.setDate(target.getDate() - dayNr + 3);  
+    var firstThursday = target.valueOf();  
+    target.setMonth(0, 1);  
+    if (target.getDay() != 4) {  
+        target.setMonth(0, 1 + ((4 - target.getDay()) + 7) % 7);  
+    }  
+    return 1 + Math.ceil((firstThursday - target) / 604800000); // 604800000 = 7 * 24 * 3600 * 1000  
+  }  
   Date.prototype.getDayOfWeek = function(day){ return ["niedziela","poniedziałek","wtorek","środa","czwartek","piątek","sobota"][ day ];};
   var _hash = window.location.hash;
   var _today = new Date();

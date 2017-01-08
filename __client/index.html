@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+
+<head>
+  <title>menu master -- login</title>
+  <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="/css/foundation.css">
+    <link rel="stylesheet" href="/css/app.css">
+
+    <script src="/js/vendor/jquery.js"></script>
+    <script src="/js/vendor/what-input.js"></script>
+    <script src="/js/vendor/foundation.js"></script>
+    <!-- vue -->
+    <script src="/js/vendor/vue.js"></script>
+    <script src="/js/vendor/vue-resource.js"></script>
+
+</head>
+
+<body onhashchange="location.reload()">
+  <h1><a href="/#!/logout"><< </a> Menu <small>master</small> :)</h1>  
+  <section id="app">
+    <a v-bind:href="hrefs.current" class="button tiny hollow "> bierzący </a> <a v-if="(day>4 || day == 0) && current.week == weekNum" v-bind:href="hrefs.next" class="button tiny hollow warning"> nastepny >> </a>
+    <dl v-cloak v-if="user"> 
+      <dt><small>info : </small></dt>
+      
+      <dd v-if="(day>4 || day == 0) && user.realm!='C'"> -- czas na nowe menu -- </dd>
+      
+      <dd v-if="user.realm !='C'"> 
+        <a href="/menu/prices/#!/" class="button hollow tiny success">CENNIK</a> 
+        <a href="/diners/#!/" class="button hollow tiny">KLIENCI</a> 
+        <a href="/orders/#!/" class="button hollow tiny">ZAMÓWIENIA</a> 
+      </dd>
+
+      <dd v-if="user.realm == 'C'"><small>twuj portfel ma : </small> {{user.wallet ? user.wallet : 0}}<small> zł</small> <a>- doładuj</a></dt>
+      
+      <dd v-if="(day>4 || day == 0) && current.week == weekNum">
+        <a v-bind:href="hrefs.next" class="button  warning"> nastepny >> </a> 
+      </dd>
+      <dd> -- w {{weekNum}} tygodniu {{year}} roku serwujemy -- </dd>
+
+      <dd v-if="user.realm == 'C' && diners[0]"><small>zamawiasz dla : </small> {{diners[0].name}}</dd> 
+
+    </dl>
+
+    <dl v-cloak v-if="menus[2]">
+      <dt><small>poniedziałek : {{menus[1].info}}</small> </dt>
+      <dd>{{menus[1].breakfast}}</dd>
+      <dd>{{menus[1].lunch}}</dd>
+      <dd>{{menus[1].tea}} </dd>
+      
+      <dt><small>wtorek : {{menus[2].info}}</small> </dt>
+      <dd>{{menus[2].breakfast}}</dd>
+      <dd>{{menus[2].lunch}}</dd>
+      <dd>{{menus[2].tea}} </dd>
+      
+      <dt><small>środa : {{menus[3].info}}</small> </dt>
+      <dd>{{menus[3].breakfast}}</dd>
+      <dd>{{menus[3].lunch}}</dd>
+      <dd>{{menus[3].tea}} </dd>
+      
+      <dt><small>czwartek : {{menus[4].info}}</small> </dt>
+      <dd>{{menus[4].breakfast}}</dd>
+      <dd>{{menus[4].lunch}}</dd>
+      <dd>{{menus[4].tea}} </dd>
+      
+      <dt><small>piątek : {{menus[5].info}}</small> </dt>
+      <dd>{{menus[5].breakfast}}</dd>
+      <dd>{{menus[5].lunch}}</dd>
+      <dd>{{menus[5].tea}} </dd>
+
+    </dl> 
+
+    <form style="margin: 10rem 1rem" v-cloak v-if="accessToken==''" action="">
+      <label for="user">login:</label>
+      <input id="user" v-model="username" type="text">
+      <label for="pass">pass:</label>
+      <input id="pass" v-model="pass" type="password">
+      <label for="btn"></label>
+      <button id="btn" class="button primary hollow" v-on:click.prevent="logIn">login</button>
+    </form>
+  </section>
+
+  <script src="js/app.js"></script>
+
+  <script type="text/javascript">
+  Date.prototype.getWeek = function () {  
+    var target  = new Date(this.valueOf());  
+    var dayNr   = (this.getDay() + 6) % 7;  
+    target.setDate(target.getDate() - dayNr + 3);  
+    var firstThursday = target.valueOf();  
+    target.setMonth(0, 1);  
+    if (target.getDay() != 4) {  
+        target.setMonth(0, 1 + ((4 - target.getDay()) + 7) % 7);  
+    }  
+    return 1 + Math.ceil((firstThursday - target) / 604800000); // 604800000 = 7 * 24 * 3600 * 1000  
+  };  
+  Date.prototype.firstDayOfWeek = function(year, week) {
+    var j1 = new Date( year,0,10,12,0,0),
+        j2 = new Date( year,0,4,12,0,0),
+        mon1 = j2.getTime() - j1.getDay() * 86400000;
+    return new Date(mon1 + ((week- 1)  * 7  + 3) * 86400000);
+  };
+
+  // Date.prototype.getWeek = function() {var onejan = new Date(this.getFullYear(),0,1);return Math.ceil((((this - onejan) / 86400000) + onejan.getDay()+1)/7);}
+  var _hash = window.location.hash;
+  var _today = new Date();
+  var _current = {'week': _today.getWeek(), 'year': _today.getFullYear(), 'day':_today.getDay() }
+  // console.log(_current)
+  // console.log('01:', _today.firstDayOfWeek('2017', '1'))
+  // console.log('52:', _today.firstDayOfWeek('2016', '52'))
+  // console.log('51:', _today.firstDayOfWeek('2016', '51'))
+  //
+  if (_hash.length > 0 && _hash.indexOf('-') > 0) {
+    _today = new Date(window.location.hash.substring(1));
+  } else {
+    _hash = _hash.substring(3).split('/');
+    if(_hash[0]>100 && _hash[1]<60) {
+      _today = _today.firstDayOfWeek(_hash[0], _hash[1]);
+    }
+  }
+
+  var app = new Vue({
+    el: '#app',
+    data: {
+      username: 'nieznajomy',
+      pass: 'pass',
+      
+      accessToken: '',
+      userId: '',
+      user: null,
+
+      weekNum: _today.getWeek(),
+      year: _today.getFullYear(),
+      
+      nextWeekNum: _today.getWeek()+1,
+      nextYear: _today.getFullYear() ,
+      
+      current: _current,
+      day: _current.day,
+      
+      hrefs: {},
+      menus: {},
+      diners: {},
+      menusPrices: {}
+    },
+    beforeMount: function() {
+      // relogin 
+      if ( _hash.indexOf('logout') != -1 ){
+        sessionStorage.removeItem('accessToken');
+        sessionStorage.removeItem('userId');
+        location.href = '/';
+      } else if (_hash.length > 0 && _hash.indexOf('@') > 0) {
+        _hash = _hash.substring(1).split('@')
+        this.accessToken = _hash[0];
+        this.userId = _hash[1];
+        sessionStorage.setItem('accessToken', this.accessToken);
+        sessionStorage.setItem('userId', this.userId);
+      } else if (sessionStorage.getItem('accessToken')) {
+        this.accessToken = sessionStorage.getItem('accessToken');
+        this.userId = sessionStorage.getItem('userId');
+      }
+      //path
+      if( this.nextWeekNum > 51 ) {
+        this.nextWeekNum = 1;
+        this.nextYear = this.year + 1;
+      }
+      this.hrefs.return      = './#!/' + this.year + '/' + this.weekNum;
+      this.hrefs.next        = './#!/' + this.nextYear + '/' + this.nextWeekNum;
+      this.hrefs.current     = './#!/' + _current.year + '/' + _current.week;
+
+      // user info
+      if(this.userId){
+        // console.log('accessToken:', this.accessToken)
+        // console.log('userId:', this.userId)
+        this.$http.get('/api/users/' + this.userId).then(
+          function(sucess) {
+            sessionStorage.setItem('user', JSON.stringify(sucess.body));
+            this.username = sucess.body.username;
+            this.user = sucess.body;            
+            console.log(this.user);
+          }, function(error) {}
+        )
+        this.$http.get('/api/users/' + this.userId +'/diners').then(
+          function(sucess) {
+            this.diners = sucess.body;
+            console.log(sucess.body);
+          }, function(error) {}
+        )
+      }
+       
+    },
+    created: function(){
+
+      // menu
+      this.$http.get('/api/menus?filter[where][year]='+ this.year +'&filter[where][week]=' + this.weekNum+'&filter[order]=day ASC').then(
+        function(sucess) {
+          var _menus_1 = sucess.body.filter(function(menu){ if(menu.day == 1) return menu; });
+          if( _menus_1.length>0) this.menus[1] = _menus_1[0];
+          var _menus_2 = sucess.body.filter(function(menu){ if(menu.day == 2) return menu; });
+          if( _menus_2.length>0) this.menus[2] = _menus_2[0];
+          var _menus_3 = sucess.body.filter(function(menu){ if(menu.day == 3) return menu; });
+          if( _menus_3.length>0) this.menus[3] = _menus_3[0];
+          var _menus_4 = sucess.body.filter(function(menu){ if(menu.day == 4) return menu; });
+          if( _menus_4.length>0) this.menus[4] = _menus_4[0];
+          var _menus_5 = sucess.body.filter(function(menu){ if(menu.day == 5) return menu; });
+          if( _menus_5.length>0) this.menus[5] = _menus_5[0];
+          console.log(this.menus)
+          this.$forceUpdate();
+        },function(error) {
+          console.log(error)
+        }
+      );
+      //cennik
+      this.$http.get('/api/menu-prices?filter[where][year]='+ this.year +'&filter[where][week]=' + this.weekNum+'&filter[order]=day ASC').then(
+        function(sucess) {
+          this.menusPrices=sucess.data;
+          
+        },function(error) {
+          console.log(error)
+        }
+      );
+    }, 
+    methods: {
+      logIn: function() {
+        if (this.userId != '') {
+          location.href = '/';
+        }
+        if (this.username != '') {
+          //console.log(this.user + "@" + this.pass)
+
+          this.$http.post('/api/users/login', {
+            "username": this.username,
+            "password": this.pass
+          }).then(
+            function(sucess) {
+              this.accessToken = sucess.body.id;
+              this.userId = sucess.body.userId;
+              sessionStorage.setItem('accessToken', this.accessToken);
+              sessionStorage.setItem('userId', this.userId);
+              console.log('sessionStorage:', sessionStorage)
+              this.$http.get('/api/users/' + this.userId).then(
+                function(sucess) {
+                  sessionStorage.setItem('user', JSON.stringify(sucess.body));
+                  this.user = sucess.body;
+                }, function(error) {}
+              )
+
+              this.$http.get('/api/users/' + this.userId +'/diners').then(
+                function(sucess) {
+                  console.log(sucess);
+                }, function(error) {}
+              )
+
+            }, function(error) {
+              console.error("error:", error)
+            });
+        }
+      }
+    }
+  })
+  </script>
+</body>
