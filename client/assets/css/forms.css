@@ -27,3 +27,6 @@
 .hint a { 
 	margin: .4rem .8rem;
 }
+.pure-form button { 
+	margin-left: 2rem;
+}

@@ -39,7 +39,7 @@
     },
     "orders": {
       "type": "hasMany",
-      "model": "diner_menu",
+      "model": "orders",
       "foreignKey": "dinerId"
     }
   },

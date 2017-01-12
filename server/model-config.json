@@ -33,11 +33,6 @@
     "dataSource": "db",
     "public": false
   },
-  "Message": {
-    "dataSource": null,
-    "public": false
-  },
-
   "Email": {
     "dataSource": "emailDs"
   },
@@ -50,7 +45,6 @@
     "$promise": {},
     "$resolved": true
   },
-
   "address": {
     "dataSource": "mongoDB",
     "public": true,
@@ -70,6 +64,12 @@
     "$resolved": true
   },
   "menu-price": {
+    "dataSource": "mongoDB",
+    "public": true,
+    "$promise": {},
+    "$resolved": true
+  },
+  "orders": {
     "dataSource": "mongoDB",
     "public": true,
     "$promise": {},
