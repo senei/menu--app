@@ -11,7 +11,16 @@
   <link rel="stylesheet" href="/assets/css/side-menu.css">
   <link rel="stylesheet" href="/assets/css/forms.css">
 
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
+  ga('create', 'UA-90720521-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
 </head>
 
 <body onhashchange="location.reload()">
@@ -67,7 +76,7 @@
           </small>
         </span>
         <br/>
-        <form id="diners" class="pure-form ">
+        <form id="diners" class="pure-form " v-if="this.sidebar.index == true ">
           <fieldset v-if="price">
             <legend>
               <small>cennik:</small>
@@ -105,7 +114,8 @@
               <input type="radio" v-on:click="chengeDiner(diner.id)" v-model="selectedDiner" :value="diner.id">
               <span>{{diner.name}}</span><span v-if="user.diners.length != index +1">, </span>  
             </span>
-            <button type="submit" v-on:click.prevent="buy" class="pure-button pure-button-primary"> Zamów </button>
+            <span> - </span>
+            <button type="submit" v-on:click.prevent="buy($event)" class="pure-button pure-button-primary"> Zamów </button>
           </fieldset>
         </form>
       </div>
@@ -266,10 +276,13 @@
       <div class="pure-g clickable" v-if="user.address != undefined && sidebar.update != ''">
         <hr class="pure-u-1-1">
         <div class="pure-u-1-5">
-          <h5>Twoje dane:</h5>
+          <h5>Twoje dane:
+            <br/>
+            <small v-on:click="addressEdit(user.address.id)">(edytuj)</small>
+            </h5>
         </div>
         <div class="pure-u-3-5">
-          <dl v-on:click="addressEdit(user.address.id)">
+          <dl>
             <dd>
               <small>imie i nazwisko:</small>
               {{user.address.recipient}}
@@ -367,11 +380,10 @@
           <form action="" class="pure-form pure-form-stacked">
             <fieldset>
               <label for="name">Login:</label>
-              <input id="name" v-bind:class="form.error.login" v-model="form.login.user" type="text" placeholder="login / e-mail">
+              <input required id="name" v-bind:class="form.error.login" v-model="form.login.user" type="text" placeholder="login / e-mail">
               <br/>
               <label for="password">Password:</label>
-              <input id="password" v-bind:class="form.error.login" v-model="form.login.pass" type="password" placeholder=" password ">
-              <br/>
+              <input required id="password" v-bind:class="form.error.login" v-model="form.login.pass" type="password" placeholder=" password ">
               <br/>
               <button type="submit" v-on:click.prevent="login" class="pure-button pure-button-primary">Zaloguj</button>
             </fieldset>

@@ -77,7 +77,7 @@
         beforeMount: function() {
             // console.log(this.form.day)
             // menu
-            this.$http.get('/api/menus?filter[where][year]=' + this.current.year + '&filter[where][week]=' + this.current.week + '&filter[order]=day ASC').then(
+            this.$http.get('/api/menus?filter[where][year]=' + this.current.year + '&filter[where][week]=' + this.current.week + '&filter[order]=created_at DESC').then(
                 function(sucess) {
                     var _menus_1 = sucess.body.filter(function(menu) {
                         if (menu.day == 1) return menu;
