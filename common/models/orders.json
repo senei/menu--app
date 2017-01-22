@@ -1,0 +1,40 @@
+{
+  "name": "orders",
+  "base": "PersistedModel",
+  "strict": false,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "set": {
+      "type": "object"
+    },
+    "year": {
+      "type": "number"
+    },
+    "week": {
+      "type": "number"
+    },
+    "created_at":{
+      "type": "number"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "diner": {
+      "type": "belongsTo",
+      "model": "diner",
+      "foreignKey": "dinerId"
+    }
+  },
+  "acls": [
+    {
+      "accessType": "READ",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW"
+    }
+  ],
+  "methods": {}
+}
